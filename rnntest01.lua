@@ -32,6 +32,7 @@ print(sequence)
 lr = 0.1
 i = 1
 step = 0
+threshold = 0.005
 --while true do
 for k = 1, 100 do
 for j = 1, 10 do
@@ -41,7 +42,7 @@ for j = 1, 10 do
    local target = torch.Tensor(1):fill(sequence[j+1]) --target is the next numbet in sequence, but other formulas are also possible
    local err = criterion:forward(output, target)
    print('Step: ', k*10+j-10, ' Input: ', input[1], ' Target: ', target[1], ' Output: ', output[1][1], ' Error: ', err)
-   if (err < 0.001 and step == 0) then step = k*10-10 end --remember this step
+   if (err < threshold and step == 0) then step = k*10-10 end --remember this step
    local gradOutput = criterion:backward(output, target)
    -- the Recurrent layer is memorizing its gradOutputs (up to memSize)
    rnn:backward(input, gradOutput)
@@ -60,4 +61,4 @@ for j = 1, 10 do
 end -- end j
 end -- end k
 
-print('Error < 0.005 on step: ', step)
+print('Error < ', threshold,' on step: ', step)
