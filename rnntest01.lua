@@ -21,7 +21,7 @@ criterion = nn.MSECriterion()
 
 -- dummy dataset (task is to predict next item, given previous)
 i = 0
-sequence = torch.Tensor(nIndex):apply(function() --fill with a simple arithmetic progression 0,1,2..9,0,1,2...
+sequence = torch.Tensor(nIndex):apply(function() --fill with a simple arithmetic progression 1,2..9,1,2...
   i = i + 1
   if i == 10 then i = 1 end
   return i
