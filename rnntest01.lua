@@ -39,8 +39,6 @@ for j = 1, 10 do
    local input = torch.Tensor(1):fill(sequence[j])
    local output = rnn:forward(input)
    local target = torch.Tensor(1):fill(sequence[j+1]) --target is the next numbet in sequence, but other formulas are also possible
-   print('Target:')
-   print(target[1])
    local err = criterion:forward(output, target)
    print('Step: ', k*10+j-10, ' Input: ', input[1], ' Target: ', target[1], ' Output: ', output[1][1], ' Error: ', err)
    if (err < 0.001 and step == 0) then step = k*10-10 end --remember this step
