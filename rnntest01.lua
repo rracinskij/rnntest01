@@ -2,7 +2,7 @@
 require 'rnn'
 
 --batchSize = 1
-rho = 3
+rho = 5
 hiddenSize = 10
 nIndex = 20
 -- RNN
@@ -49,7 +49,7 @@ for j = 1, 9 do
    rnn:backward(input, gradOutput)
    
    -- note that updateInterval < rho
-   if j % 2 == 0 then --update interval is 3
+   if j % 3 == 0 then --update interval
       -- backpropagates through time (BPTT) :
       -- 1. backward through feedback and input layers,
       rnn:backwardThroughTime()
