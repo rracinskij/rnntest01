@@ -2,7 +2,7 @@
 require 'rnn'
 
 --batchSize = 1
-rho = 5
+rho = 3
 hiddenSize = 10
 nIndex = 20
 -- RNN
@@ -30,9 +30,9 @@ print('Sequence:')
 print(sequence)
 
 lr = 0.1
-i = 1
 step = 0
 threshold = 0.002
+thresholdStep = 0
 --while true do
 for k = 1, 100 do
 for j = 1, 9 do
@@ -43,13 +43,13 @@ for j = 1, 9 do
    local target = torch.Tensor(1):fill(sequence[j+1]) --target is the next numbet in sequence, but other formulas are also possible
    local err = criterion:forward(output, target)
    print('Step: ', step, ' Input: ', input[1], ' Target: ', target[1], ' Output: ', output[1][1], ' Error: ', err)
-   if (err < threshold and step == 0) then step = k*10-10 end --remember this step
+   if (err < threshold and thresholdStep == 0) then thresholdStep = step end --remember this step
    local gradOutput = criterion:backward(output, target)
    -- the Recurrent layer is memorizing its gradOutputs (up to memSize)
    rnn:backward(input, gradOutput)
    
    -- note that updateInterval < rho
-   if j % 3 == 0 then --update interval is 3
+   if j % 2 == 0 then --update interval is 3
       -- backpropagates through time (BPTT) :
       -- 1. backward through feedback and input layers,
       rnn:backwardThroughTime()
@@ -62,4 +62,4 @@ for j = 1, 9 do
 end -- end j
 end -- end k
 
-print('Error < ', threshold,' on step: ', step)
+print('Error < ', threshold,' on step: ', thresholdStep)
