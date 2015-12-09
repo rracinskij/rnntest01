@@ -16,8 +16,7 @@ r = nn.Recurrent(
 
 rnn = nn.Sequential()
 rnn:add(r)
-rnn:add(nn.Linear(hiddenSize, 1))--nIndex))
---rnn:add(nn.LogSoftMax()) 
+rnn:add(nn.Linear(hiddenSize, 1))
 
 criterion = nn.MSECriterion() 
 
