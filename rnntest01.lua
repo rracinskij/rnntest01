@@ -7,9 +7,11 @@ hiddenSize = 10
 nIndex = 20
 -- RNN
 r = nn.Recurrent(
-   hiddenSize, nn.LookupTable(nIndex, hiddenSize), 
-   nn.Linear(hiddenSize, hiddenSize), nn.Sigmoid(), 
-   rho
+   hiddenSize, --size of the input layer
+   nn.LookupTable(nIndex, hiddenSize), --input layer (inputSize, outputSize) (change to nn.Linear to work with numbers <1)
+   nn.Linear(hiddenSize, hiddenSize), --recurrent layer
+   nn.Sigmoid(), --transfer function
+   rho  --maximum number of time steps for BPTT
 )
 
 rnn = nn.Sequential()
@@ -40,7 +42,7 @@ for j = 1, 9 do
    -- a batch of inputs
    local input = torch.Tensor(1):fill(sequence[j])
    local output = rnn:forward(input)
-   local target = torch.Tensor(1):fill(sequence[j+1]) --target is the next numbet in sequence, but other formulas are also possible
+   local target = torch.Tensor(1):fill(sequence[j+1]) --target is the next numbet in sequence
    local err = criterion:forward(output, target)
    print('Step: ', step, ' Input: ', input[1], ' Target: ', target[1], ' Output: ', output[1][1], ' Error: ', err)
    if (err < threshold and thresholdStep == 0) then thresholdStep = step end --remember this step
