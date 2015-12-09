@@ -8,7 +8,7 @@ nIndex = 20
 -- RNN
 r = nn.Recurrent(
    hiddenSize, --size of the input layer
-   nn.LookupTable(nIndex, hiddenSize), --input layer (inputSize, outputSize) (change to nn.Linear to work with numbers <1)
+   nn.LookupTable(nIndex, hiddenSize), --input layer (inputSize, outputSize) (use nn.Linear to work with numbers <1)
    nn.Linear(hiddenSize, hiddenSize), --recurrent layer
    nn.Sigmoid(), --transfer function
    rho  --maximum number of time steps for BPTT
