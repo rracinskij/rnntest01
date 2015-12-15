@@ -4,11 +4,11 @@ fun = require 'fun'
 
 -- Dataset which is a cyclic sequence of the digits [1, 9]. Given a digit the
 -- model should learn to predict the subsequent digit.
-nLength          = 20
-sequenceIterator = fun.range(1, 9):cycle():take(nLength)
+nLength  = 20
+sequence = fun.range(1, 9):cycle():take(nLength):totable()
 
-print('Sequence:')
-sequenceIterator:each(print)
+print("Sequence:", table.concat(sequence, ", "))
+print("")
 
 rho        = 5
 hiddenSize = 10
@@ -39,19 +39,20 @@ model:add(nn.Linear(hiddenSize, outputSize))
 -- Criterion: Mean squared error
 criterion = nn.MSECriterion()
 
-function gradientUpgrade(model, x, y, criterion, learningRate, i, j)
-  local prediction = model:forward(x)
-  local err = criterion:forward(prediction, y)
+function gradientUpgrade(model, x, y, criterion, learningRate, iteration)
+  local prediction  = model:forward(x)
+
+  local error       = criterion:forward (prediction, y)
   local gradOutputs = criterion:backward(prediction, y)
 
-  -- The recurrent layer is memorizing its gradOutputs (up to memSize)
+  -- The recurrent layer is memorising its gradOutputs
   model:backward(x, gradOutputs)
 
   -- Update interval must be < rho
   local updateInterval = 3
 
   -- Backpropagation through time (BPTT)
-  if j % updateInterval == 0 then
+  if iteration % updateInterval == 0 then
     -- Backward through feedback and input layers
     model:backwardThroughTime()
 
@@ -65,30 +66,40 @@ function gradientUpgrade(model, x, y, criterion, learningRate, i, j)
     model:forget()
   end
 
-  return prediction, err
+  return prediction, error
 end
 
-sequence     = sequenceIterator:totable()
 learningRate = 0.1
-iterations   = 50
-threshold    = 0.002
+epochs       = 50
+threshold    = 0.002  -- Stop when the average error of the epoch is lower than this value
 
--- Step where the error rate was lower than `threshold`
-step          = 1
-thresholdStep = 0
+-- For each epoch iterate over the entire sequence
+for epoch = 1, epochs do
+  print("Epoch " .. epoch)
 
--- For each iteration iterate over the entire sequence
-for i = 1, iterations do
-  for j = 1, nLength - 1 do
-    local input  = torch.Tensor(1):fill(sequence[j])
-    local target = torch.Tensor(1):fill(sequence[j + 1])  -- Next number in sequence
-    local prediction, error = gradientUpgrade(model, input, target, criterion, learningRate, i, j)
+  local errors = fun.range(1, nLength - 1):map(function (i)
+    local input  = torch.Tensor(1):fill(sequence[i])
+    local target = torch.Tensor(1):fill(sequence[i + 1])  -- Next number in sequence
+    local prediction, error =
+      gradientUpgrade(model, input, target, criterion, learningRate, i)
 
-    print('Step: ', step, ' Input: ', input[1], ' Target: ', target[1], ' Output: ', prediction[1][1], ' Error: ', error)
-    if (error < threshold and thresholdStep == 0) then thresholdStep = step end
+    print(
+      "Input: ", input[1],
+      " Target: ", target[1],
+      " Output: ", prediction[1][1],
+      " Error: ", error)
 
-    step = step + 1
+    return error
+  end)
+
+  local avgError = errors:sum() / errors:length()
+
+  print("Average error: ", avgError)
+
+  if (avgError < threshold) then
+    print("Average error is lower than " .. threshold)
+    break
   end
-end
 
-print('Error < ', threshold,' on step: ', thresholdStep)
+  print("")
+end
