@@ -1,6 +1,7 @@
 -- This is a modification of an example provided at https://github.com/Element-Research/rnn#rnn.Recurrent
 require 'rnn'
 fun = require 'fun'
+require 'gnuplot'
 
 -- Dataset which is a cyclic sequence of the digits [1, 9]. Given a digit the
 -- model should learn to predict the subsequent digit.
@@ -39,9 +40,13 @@ model:add(nn.Linear(hiddenSize, outputSize))
 -- Criterion: Mean squared error
 criterion = nn.MSECriterion()
 
+-- For comparison, use a different criterion
+-- criterion = nn.SmoothL1Criterion()
+
 function gradientUpgrade(model, x, y, criterion, learningRate, iteration)
   local prediction  = model:forward(x)
 
+  -- Use criterion to compute the loss and its gradients
   local error       = criterion:forward (prediction, y)
   local gradOutputs = criterion:backward(prediction, y)
 
@@ -71,10 +76,9 @@ end
 
 learningRate = 0.1
 epochs       = 50
-threshold    = 0.002  -- Stop when the average error of the epoch is lower than this value
 
 -- For each epoch iterate over the entire sequence
-for epoch = 1, epochs do
+epochErrors = fun.range(1, epochs):map(function (epoch)
   print("Epoch " .. epoch)
 
   local errors = fun.range(1, nLength - 1):map(function (i)
@@ -95,11 +99,16 @@ for epoch = 1, epochs do
   local avgError = errors:sum() / errors:length()
 
   print("Average error: ", avgError)
-
-  if (avgError < threshold) then
-    print("Average error is lower than " .. threshold)
-    break
-  end
-
   print("")
-end
+
+  return avgError
+end)
+
+gnuplot.title('RNN')
+gnuplot.xlabel('Epoch')
+gnuplot.plot({'Average error', torch.Tensor(epochErrors:totable()), '+-'})
+gnuplot.grid(true)
+gnuplot.axis({
+  0, 50,  -- Limits of x axis
+  0, 1    -- Limits of y axis
+})
