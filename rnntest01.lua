@@ -1,66 +1,94 @@
 -- This is a modification of an example provided at https://github.com/Element-Research/rnn#rnn.Recurrent
 require 'rnn'
+fun = require 'fun'
 
---batchSize = 1
-rho = 5
-hiddenSize = 10
-nIndex = 20
--- RNN
-r = nn.Recurrent(
-   hiddenSize, --size of the input layer
-   nn.LookupTable(nIndex, hiddenSize), --input layer (inputSize, outputSize) (use nn.Linear to work with numbers <1)
-   nn.Linear(hiddenSize, hiddenSize), --recurrent layer
-   nn.Sigmoid(), --transfer function
-   rho  --maximum number of time steps for BPTT
-)
+-- Dataset which is a cyclic sequence of the digits [1, 9]. Given a digit the
+-- model should learn to predict the subsequent digit.
+nLength          = 20
+sequenceIterator = fun.range(1, 9):cycle():take(nLength)
 
-rnn = nn.Sequential()
-rnn:add(r)
-rnn:add(nn.Linear(hiddenSize, 1))
-
-criterion = nn.MSECriterion() 
-
--- dummy dataset (task is to predict next item, given previous)
-i = 0
-sequence = torch.Tensor(nIndex):apply(function() --fill with a simple arithmetic progression 1,2..9,1,2...
-  i = i + 1
-  if i == 10 then i = 1 end
-  return i
-end)
 print('Sequence:')
-print(sequence)
+sequenceIterator:each(print)
 
-lr = 0.1
-step = 0
-threshold = 0.002
+rho        = 5
+hiddenSize = 10
+outputSize = 1  -- Next predicted digit
+
+-- Configuration of the model
+model = nn.Sequential()
+model:add(nn.Recurrent(
+  -- Output size of the RNN
+  hiddenSize,
+
+  -- Input layer: Use a lookup table containing `nLength` tensors of size
+  -- `hiddenSize`.
+  nn.LookupTable(nLength, hiddenSize),
+
+  -- Feedback layer: Recurrence; use nn.Linear to work with numbers < 1
+  nn.Linear(hiddenSize, hiddenSize),
+
+  -- Transfer function
+  nn.Sigmoid(),
+
+  -- Maximum number of time steps for BPTT, default is 9999 meaning that the
+  -- changes will be backpropgated through the entire sequence.
+  rho
+))
+model:add(nn.Linear(hiddenSize, outputSize))
+
+-- Criterion: Mean squared error
+criterion = nn.MSECriterion()
+
+function gradientUpgrade(model, x, y, criterion, learningRate, i, j)
+  local prediction = model:forward(x)
+  local err = criterion:forward(prediction, y)
+  local gradOutputs = criterion:backward(prediction, y)
+
+  -- The recurrent layer is memorizing its gradOutputs (up to memSize)
+  model:backward(x, gradOutputs)
+
+  -- Update interval must be < rho
+  local updateInterval = 3
+
+  -- Backpropagation through time (BPTT)
+  if j % updateInterval == 0 then
+    -- Backward through feedback and input layers
+    model:backwardThroughTime()
+
+    -- Update parameters
+    model:updateParameters(learningRate)
+
+    -- Zero the accumulation of the gradients with respect to model parameters
+    model:zeroGradParameters()
+
+    -- Reset the internal time-step counter
+    model:forget()
+  end
+
+  return prediction, err
+end
+
+sequence     = sequenceIterator:totable()
+learningRate = 0.1
+iterations   = 50
+threshold    = 0.002
+
+-- Step where the error rate was lower than `threshold`
+step          = 1
 thresholdStep = 0
---while true do
-for k = 1, 100 do
-for j = 1, 9 do
-   step = step + 1
-   -- a batch of inputs
-   local input = torch.Tensor(1):fill(sequence[j])
-   local output = rnn:forward(input)
-   local target = torch.Tensor(1):fill(sequence[j+1]) --target is the next numbet in sequence
-   local err = criterion:forward(output, target)
-   print('Step: ', step, ' Input: ', input[1], ' Target: ', target[1], ' Output: ', output[1][1], ' Error: ', err)
-   if (err < threshold and thresholdStep == 0) then thresholdStep = step end --remember this step
-   local gradOutput = criterion:backward(output, target)
-   -- the Recurrent layer is memorizing its gradOutputs (up to memSize)
-   rnn:backward(input, gradOutput)
-   
-   -- note that updateInterval < rho
-   if j % 3 == 0 then --update interval
-      -- backpropagates through time (BPTT) :
-      -- 1. backward through feedback and input layers,
-      rnn:backwardThroughTime()
-      -- 2. updates parameters
-      rnn:updateParameters(lr)
-      rnn:zeroGradParameters()
-      -- 3. reset the internal time-step counter
-      rnn:forget()
-   end --end if
-end -- end j
-end -- end k
+
+-- For each iteration iterate over the entire sequence
+for i = 1, iterations do
+  for j = 1, nLength - 1 do
+    local input  = torch.Tensor(1):fill(sequence[j])
+    local target = torch.Tensor(1):fill(sequence[j + 1])  -- Next number in sequence
+    local prediction, error = gradientUpgrade(model, input, target, criterion, learningRate, i, j)
+
+    print('Step: ', step, ' Input: ', input[1], ' Target: ', target[1], ' Output: ', prediction[1][1], ' Error: ', error)
+    if (error < threshold and thresholdStep == 0) then thresholdStep = step end
+
+    step = step + 1
+  end
+end
 
 print('Error < ', threshold,' on step: ', thresholdStep)
