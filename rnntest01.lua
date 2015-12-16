@@ -55,6 +55,7 @@ function updateParametersManual(model, x, y, criterion, learningRate, iteration)
   return prediction[1], loss
 end
 
+local sgdState = {}
 function updateParametersSGD(model, input, target, criterion, learningRate, iteration)
   -- Obtain weights and gradients from model
   local modelParams, modelGradParams = model:getParameters()
@@ -84,7 +85,7 @@ function updateParametersSGD(model, input, target, criterion, learningRate, iter
     return loss, modelGradParams
   end
 
-  local _, fs = optim.sgd(eval, modelParams, sgdParams)
+  local _, fs = optim.sgd(eval, modelParams, sgdParams, sgdState)
   local loss = fs[1]
 
   return prediction[1][1], loss
