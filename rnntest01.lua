@@ -43,7 +43,7 @@ criterion = nn.MSECriterion()
 -- For comparison, use a different criterion
 -- criterion = nn.SmoothL1Criterion()
 
-function gradientUpgrade(model, x, y, criterion, learningRate, iteration)
+function updateGradient(model, x, y, criterion, learningRate, iteration)
   local prediction  = model:forward(x)
 
   -- Use criterion to compute the loss and its gradients
@@ -85,7 +85,7 @@ epochErrors = fun.range(1, epochs):map(function (epoch)
     local input  = torch.Tensor(1):fill(sequence[i])
     local target = torch.Tensor(1):fill(sequence[i + 1])  -- Next number in sequence
     local prediction, error =
-      gradientUpgrade(model, input, target, criterion, learningRate, i)
+      updateGradient(model, input, target, criterion, learningRate, i)
 
     print(
       "Input: ", input[1],
