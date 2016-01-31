@@ -19,12 +19,12 @@ Number of iterations: 990
 Learning rate: 0.05
 
 Test 01: (0.01, 0.02, 0.03... sequence)
-Input: Column 1 in t=-1, -2,... 
-Target: Column 1 in t=0
+Input: Variable 1 in t=-1, -2,... 
+Target: Variable 1 in t=0
 Model: linear
 Last iteration:
 
-inputs:	
+inputs:
  0.3000
  0.3100
  0.3200
@@ -57,12 +57,12 @@ outputs:
 Err: 0.0023547501232523
 
 Test 02: (0.01, 0.01, 0.02, 0.03, 0.05 sequence)
-Input: Column 2 in t=-1, -2,...
-Target: Column 2 in t=0
+Input: Variable 2 in t=-1, -2,...
+Target: Variable 2 in t=0
 Model: linear
 Last iteration:
 
-inputs:	
+inputs:
  0.5500
  0.0100
  0.0100
@@ -72,7 +72,7 @@ inputs:
  0.0800
  0.1300
 
-targets:	
+targets:
  0.0100
  0.0100
  0.0200
@@ -82,7 +82,7 @@ targets:
  0.1300
  0.2100
 
-outputs:	
+outputs:
  0.2939
  0.0252
  0.0847
@@ -94,5 +94,10 @@ outputs:
 
 Err: 0.070459260975717
 
+Test 03: (all three sequences)
+Input: Variables 1-3 in t=-1, -2,...
+Target: Variables 1-3 in t=0
+Model: linear
+Last iteration:
 
 
