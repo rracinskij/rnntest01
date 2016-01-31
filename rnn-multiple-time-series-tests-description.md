@@ -14,8 +14,13 @@ Each test was performed with two models:
 - recurrent model with a linear recurrent layer from the original example with rho = 3, number of hidden units = 8 and Tanh activation function;
 - LSTM model with rho = 3 and 8 hidden units.
 
+Number of iterations: 990
+Learning rate: 0.05
+
 Test 1:
 Input: Column 1 in t=-1, -2,...
 Target: Column 1 in t=0
+Model: linear
+
 
 
