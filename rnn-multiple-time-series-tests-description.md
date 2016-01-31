@@ -23,6 +23,7 @@ Input: Column 1 in t=-1, -2,...
 Target: Column 1 in t=0
 Model: linear
 Last iteration:
+
 inputs:	
  0.3000
  0.3100
@@ -54,6 +55,44 @@ outputs:
  0.3208
 
 Err: 0.0023547501232523
+
+Test 01:
+Input: Column 1 in t=-1, -2,...
+Target: Column 1 in t=0
+Model: LSTM
+Last iteration:
+
+inputs:	
+ 0.3000
+ 0.3100
+ 0.3200
+ 0.3300
+ 0.3400
+ 0.3500
+ 0.3600
+ 0.3700
+
+targets:	
+ 0.3100
+ 0.3200
+ 0.3300
+ 0.3400
+ 0.3500
+ 0.3600
+ 0.3700
+ 0.3800
+
+outputs:	
+ 0.2886
+ 0.2927
+ 0.2968
+ 0.3008
+ 0.3047
+ 0.3086
+ 0.3125
+ 0.3163
+
+Err: 0.0078843542625712
 
 
 
