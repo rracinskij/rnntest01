@@ -19,9 +19,13 @@ Number of iterations: 990
 Learning rate: 0.05
 
 Test 01: (0.01, 0.02, 0.03... sequence)
+
 Input: Variable 1 in t=-1, -2,... 
+
 Target: Variable 1 in t=0
+
 Model: linear
+
 Last iteration:
 
 inputs:
@@ -57,9 +61,13 @@ outputs:
 Err: 0.0023547501232523
 
 Test 02: (0.01, 0.01, 0.02, 0.03, 0.05 sequence)
+
 Input: Variable 2 in t=-1, -2,...
+
 Target: Variable 2 in t=0
+
 Model: linear
+
 Last iteration:
 
 inputs:
@@ -95,9 +103,48 @@ outputs:
 Err: 0.070459260975717
 
 Test 03: (all three sequences)
+
 Input: Variables 1-3 in t=-1, -2,...
+
 Target: Variables 1-3 in t=0
+
 Model: linear
+
 Last iteration:
+
+inputs:	
+ 0.3000  0.5500 -0.0046
+ 0.3100  0.0100 -0.1264
+ 0.3200  0.0100  0.1121
+ 0.3300  0.0200  0.1886
+ 0.3400  0.0300  0.2116
+ 0.3500  0.0500  0.2185
+ 0.3600  0.0800  0.2155
+ 0.3700  0.1300  0.2047
+[torch.DoubleTensor of size 8x3]
+
+targets:	
+ 0.3100  0.0100 -0.1264
+ 0.3200  0.0100  0.1121
+ 0.3300  0.0200  0.1886
+ 0.3400  0.0300  0.2116
+ 0.3500  0.0500  0.2185
+ 0.3600  0.0800  0.2155
+ 0.3700  0.1300  0.2047
+ 0.3800  0.2100  0.1814
+[torch.DoubleTensor of size 8x3]
+
+outputs:	
+ 0.2517  0.2859 -0.1069
+ 0.2065  0.0651  0.1033
+ 0.2793  0.1330  0.1595
+ 0.3489  0.1632  0.2172
+ 0.3538  0.1673  0.2252
+ 0.3573  0.1743  0.2219
+ 0.3590  0.1835  0.2106
+ 0.3579  0.1980  0.1867
+[torch.DoubleTensor of size 8x3]
+
+Iter: 990   Err: 0.028445357200187
 
 
