@@ -15,12 +15,45 @@ Each test was performed with two models:
 - LSTM model with rho = 3 and 8 hidden units.
 
 Number of iterations: 990
+
 Learning rate: 0.05
 
-Test 1:
+Test 01:
 Input: Column 1 in t=-1, -2,...
 Target: Column 1 in t=0
 Model: linear
+Last iteration:
+inputs:	
+ 0.3000
+ 0.3100
+ 0.3200
+ 0.3300
+ 0.3400
+ 0.3500
+ 0.3600
+ 0.3700
+
+targets:	
+ 0.3100
+ 0.3200
+ 0.3300
+ 0.3400
+ 0.3500
+ 0.3600
+ 0.3700
+ 0.3800
+
+outputs:	
+ 0.3050
+ 0.3073
+ 0.3095
+ 0.3118
+ 0.3141
+ 0.3163
+ 0.3186
+ 0.3208
+
+Err: 0.0023547501232523
 
 
 
