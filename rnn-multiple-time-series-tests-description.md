@@ -18,8 +18,8 @@ Number of iterations: 990
 
 Learning rate: 0.05
 
-Test 01:
-Input: Column 1 in t=-1, -2,...
+Test 01: (0.01, 0.02, 0.03... sequence)
+Input: Column 1 in t=-1, -2,... 
 Target: Column 1 in t=0
 Model: linear
 Last iteration:
@@ -56,43 +56,43 @@ outputs:
 
 Err: 0.0023547501232523
 
-Test 01:
-Input: Column 1 in t=-1, -2,...
-Target: Column 1 in t=0
-Model: LSTM
+Test 02: (0.01, 0.01, 0.02, 0.03, 0.05 sequence)
+Input: Column 2 in t=-1, -2,...
+Target: Column 2 in t=0
+Model: linear
 Last iteration:
 
 inputs:	
- 0.3000
- 0.3100
- 0.3200
- 0.3300
- 0.3400
- 0.3500
- 0.3600
- 0.3700
+ 0.5500
+ 0.0100
+ 0.0100
+ 0.0200
+ 0.0300
+ 0.0500
+ 0.0800
+ 0.1300
 
 targets:	
- 0.3100
- 0.3200
- 0.3300
- 0.3400
- 0.3500
- 0.3600
- 0.3700
- 0.3800
+ 0.0100
+ 0.0100
+ 0.0200
+ 0.0300
+ 0.0500
+ 0.0800
+ 0.1300
+ 0.2100
 
 outputs:	
- 0.2886
- 0.2927
- 0.2968
- 0.3008
- 0.3047
- 0.3086
- 0.3125
- 0.3163
+ 0.2939
+ 0.0252
+ 0.0847
+ 0.1329
+ 0.1359
+ 0.1424
+ 0.1519
+ 0.1677
 
-Err: 0.0078843542625712
+Err: 0.070459260975717
 
 
 
