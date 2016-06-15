@@ -78,7 +78,9 @@ while iteration<100 do
    -- 3. backward sequence through rnn (i.e. backprop through time)
    rnn:zeroGradParameters()
    local gradOutputs = criterion:backward(outputs, targets) 
-   local gradInputs = rnn:backward(inputs, gradOutputs)
+   local gradInputs = rnn:backward(inputs, gradOutputs) 
+   -- note that LookupTable does not generate any gradInputs and it can be a problem in more complicated models. 
+   -- a workaround is in https://github.com/Element-Research/rnn/issues/185
 
    -- 4. update
    rnn:updateParameters(lr)
