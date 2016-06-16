@@ -62,18 +62,9 @@ while iteration<100 do
    -- 2. forward sequence through rnn
    local outputs = rnn:forward(inputs)
    local err = criterion:forward(outputs, targets)
-
-   -- retrieve output, since LogSoftMax returns log(p)
-       local out = outputs[rho]:clone():exp() --copy the tensor, or operation will be performed on initial tensor otherwise
-       maxIndex = 0
-       local maxOutput = 0 
-       for i=1,nIndex do
-         if out[1][i]>maxOutput then
-           maxOutput = out[1][i]
-           maxIndex = i
-          end
-        end 
-      print('# iteration: ', iteration, 'input:', inputs[rho][1], 'target:', targets[rho][1], 'output:', maxIndex)
+   -- get the classifier output
+   maxOutput, maxIndex = torch.max(outputs[rho][1],1) 
+   print('# iteration: ', iteration, 'input:', inputs[rho][1], 'target:', targets[rho][1], 'output:', maxIndex)
 
    -- 3. backward sequence through rnn (i.e. backprop through time)
    rnn:zeroGradParameters()
