@@ -26,7 +26,7 @@ print(sequence)
 -- recurrent layer
 local r = nn.Recurrent(
    hiddenSize, --output size
-   nn.LookupTable(nIndex, hiddenSize), --input layer. Apply LookupTable to use discrete space (https://github.com/Element-Research/rnn/issues/113)
+   nn.LookupTable(nIndex, hiddenSize), --input layer. Use discrete space to apply LookupTable (https://github.com/Element-Research/rnn/issues/113)
    nn.Linear(hiddenSize, hiddenSize), --recurrent layer
    nn.Tanh(), 
    rho
