@@ -60,6 +60,7 @@ while iteration<100 do
    seqIndex = seqIndex - rho+1
    
    -- 2. forward sequence through rnn
+   rnn:zeroGradParameters()
    local outputs = rnn:forward(inputs)
    local err = criterion:forward(outputs, targets)
    -- get the classifier output
@@ -67,7 +68,6 @@ while iteration<100 do
    print('# iteration: ', iteration, 'input:', inputs[rho][1], 'target:', targets[rho][1], 'output:', maxIndex[1])
 
    -- 3. backward sequence through rnn (i.e. backprop through time)
-   rnn:zeroGradParameters()
    local gradOutputs = criterion:backward(outputs, targets) 
    local gradInputs = rnn:backward(inputs, gradOutputs) 
    -- note that LookupTable does not generate any gradInputs and it can be a problem in more complicated models. 
